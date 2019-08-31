@@ -76,6 +76,10 @@ const onDownload = async (soulseek, ctx, query) => {
     if (err) { handleErr(ctx, err); }
     const results = rawResults.filter((r) => { return filterResult(r, query) });
     const sorted = _.sortBy(results, 'speed');
+    if (sorted.length == 0) {
+      sendMessage(ctx, `Found 0 results (${rawResults.length} unfiltered)`);
+      return;
+    }
     const bestResult = sorted[sorted.length - 1];
     sendMessage(ctx, `Found ${results.length} results (${rawResults.length} unfiltered)\nBest result: ${formatResult(bestResult)}`);
     retrieveFile(soulseek, ctx, bestResult, `${query}.mp3`);
