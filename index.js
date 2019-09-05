@@ -39,7 +39,6 @@ const filterResult = (r, query) => {
   const splitFilename = filename.split(' - ');
 
   return (r.bitrate >= 320
-          && r.slots === true
           && r.file.endsWith('.mp3')
           && _.every(splitQuery, (piece, i) => {
             try {
@@ -56,7 +55,7 @@ const filterResult = (r, query) => {
 };
 
 const formatResult = (r) => {
-  return `${basename(r.file)} (${humanFilesize(r.size)})`;
+  return `${basename(r.file)} (${humanFilesize(r.size)}) [slots: ${r.slots}]`;
 };
 
 const retrieveFile = (soulseek, ctx, result, filename) => {
@@ -66,7 +65,7 @@ const retrieveFile = (soulseek, ctx, result, filename) => {
     path: downloadPath,
   }, (err, data) => {
     if (err) { handleErr(ctx, err); }
-    sendMessage(ctx, `Download of "${filename}" completed!`);
+    sendMessage(ctx, `Download of "${downloadPath}" completed!`);
   });
 }
 
@@ -88,6 +87,7 @@ const onDownload = async (soulseek, ctx, query) => {
 }
 
 const main = async (soulseek) => {
+  console.log("Starting...");
   const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
   bot.on('text', (ctx) => {
     const query = ctx.update.message.text.trim();
