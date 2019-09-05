@@ -88,8 +88,8 @@ const onDownload = async (soulseek, ctx, query) => {
 
 const main = async (soulseek) => {
   const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
-  bot.command('download', (ctx) => {
-    const query = ctx.update.message.text.replace('/download ', '').trim();
+  bot.on('text', (ctx) => {
+    const query = ctx.update.message.text.trim();
     onDownload(soulseek, ctx, query);
   });
   bot.launch();
