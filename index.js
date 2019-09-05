@@ -74,14 +74,15 @@ const onDownload = async (soulseek, ctx, query) => {
   const req = query.toLowerCase().replace(' - ', ' ');
   soulseek.search({ req, timeout: 20000 }, (err, rawResults) => {
     if (err) { handleErr(ctx, err); }
-    const results = rawResults.filter((r) => { return filterResult(r, query) });
-    const sorted = _.sortBy(results, 'speed');
-    if (sorted.length == 0) {
-      sendMessage(ctx, `Found 0 results (${rawResults.length} unfiltered)`);
+    const sorted = _.sortBy(rawResults, ['speed', 'slots']);
+    const filtered = sorted.filter((r) => { return filterResult(r, query) });
+    if (filtered.length === 0) {
+      const resultsString = _.map(_.first(results, 20), formatResult).join('\n');
+      sendMessage(ctx, `Found 0 results (${rawResults.length} unfiltered)\n\n${resultsString}`);
       return;
     }
-    const bestResult = sorted[sorted.length - 1];
-    sendMessage(ctx, `Found ${results.length} results (${rawResults.length} unfiltered)\nBest result: ${formatResult(bestResult)}`);
+    const bestResult = filtered[filtered.length - 1];
+    sendMessage(ctx, `Found ${filtered.length} results (${rawResults.length} unfiltered)\nBest result: ${formatResult(bestResult)}`);
     retrieveFile(soulseek, ctx, bestResult, `${query}.mp3`);
   });
 }
