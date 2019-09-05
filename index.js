@@ -60,9 +60,10 @@ const formatResult = (r) => {
 };
 
 const retrieveFile = (soulseek, ctx, result, filename) => {
+  const downloadPath = __dirname + '/download/' + filename;
   soulseek.download({
     file: result,
-    path: __dirname + '/download/' + filename,
+    path: downloadPath,
   }, (err, data) => {
     if (err) { handleErr(ctx, err); }
     sendMessage(ctx, `Download of "${filename}" completed!`);
