@@ -55,7 +55,7 @@ const filterResult = (r, query) => {
 };
 
 const formatResult = (r) => {
-  return `${basename(r.file)} (${humanFilesize(r.size)}) [slots: ${r.slots}]`;
+  return `|${r.bitrate}| ${basename(r.file)} (${humanFilesize(r.size)}) [slots: ${r.slots}]`;
 };
 
 const retrieveFile = (soulseek, ctx, result, filename) => {
@@ -77,7 +77,7 @@ const onDownload = async (soulseek, ctx, query) => {
     const sorted = _.sortBy(rawResults, ['speed', 'slots']);
     const filtered = sorted.filter((r) => { return filterResult(r, query) });
     if (filtered.length === 0) {
-      const resultsString = _.map(_.first(rawResults, 20), formatResult).join('\n');
+      const resultsString = _.map(sorted, formatResult).join('\n');
       sendMessage(ctx, `Found 0 results (${rawResults.length} unfiltered)\n\n${resultsString}`);
       return;
     }
